@@ -143,7 +143,7 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return ~( x & y );
+  return ~(x&y) & ~(~x&~y);
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -165,7 +165,7 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return x + 1 < x;
+  return (!((x+1)^(~x))) & (~(!(~x)^0)) ;
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -176,7 +176,7 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  return !(~x & ~(0x55 | 0x55 << 8 | 0x55 << 16 | 0x55 << 24));
 }
 /* 
  * negate - return -x 
@@ -186,7 +186,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x+1;
 }
 //3
 /* 
@@ -199,7 +199,8 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int low_bound = 0x30, high_bound = 0x3a;
+  return !(x + (~low_bound+1) >> 31) & (x + (~high_bound+1)>>31) ;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -209,7 +210,7 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  return ((!x)<<31>>31 & z) | ((!!x)<<31>>31 & y);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -219,7 +220,7 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  return !(y + (~x+1) >> 31);
 }
 //4
 /* 
@@ -231,7 +232,7 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  return ~(x>>31) & ~((~x + 1)>>31) &1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -246,7 +247,20 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int idx = 1;
+  x = ((!(x>>31))<<31>>31 & x) | ((!!(x>>31))<<31>>31 & ~x);
+  idx += ((!!(x>>16))<<31>>31 & 16);
+  x >>= ((!!(x>>16))<<31>>31 & 16);
+  idx += ((!!(x>>8))<<31>>31 & 8);
+  x >>= ((!!(x>>8))<<31>>31 & 8);
+  idx += ((!!(x>>4))<<31>>31 & 4);
+  x >>= ((!!(x>>4))<<31>>31 & 4);
+  idx += ((!!(x>>2))<<31>>31 & 2);
+  x >>= ((!!(x>>2))<<31>>31 & 2);
+  idx += ((!!(x>>1))<<31>>31 & 1);
+  x >>= ((!!(x>>1))<<31>>31 & 1);
+  idx += !!x;
+  return idx;
 }
 //float
 /* 
