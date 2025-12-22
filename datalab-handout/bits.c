@@ -275,7 +275,22 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  int idx = 23;
+  if(!(uf<<1>>24)){ 
+    if(!(uf<<8)) return uf;
+    else {
+      return (uf>>31<<31) ^ (uf <<1);
+    }
+  }
+  if(!(~uf<<1>>24)){
+    return uf;
+  }
+  while((uf>>idx)&1){
+    uf ^= (1<<idx);
+    idx++;
+  }
+  uf ^= (1<<idx);
+  return uf;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -290,7 +305,30 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  int f = uf>>31<<31;
+  int of = 0x80000000, bias = 127;
+  int E = (uf<<1>>24);
+  int exp = E - bias;
+  int m = uf<<9>>9>>(23-exp)<<(23-exp);
+  if(exp < 0) return 0;
+  // printf(" uf:%b\n f:%b\n E:%b\n m:%b\n",uf,f,E,m);
+  if(!(~E) || exp > 31){
+    return of;
+  }
+  if(!E){ 
+    // printf("!E\n");
+    if(!m) return 0;
+    else {
+      m <<= (exp-1);
+      if (f)  m = ~m+1;
+      return m;
+    }
+  }
+  else {
+    m = (m<<(exp-1) | 1 << exp);
+    if (f)  m = ~m+1;
+    return m;
+}
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -306,5 +344,11 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+  if ( x > 127) {
+    return 0x7F800000;
+  } 
+  if(x < -127) {
+    return 0;
+  }
+  return (x+127)<<23;
 }
