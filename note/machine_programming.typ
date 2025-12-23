@@ -2,15 +2,39 @@
 
 = Machine-level Programming 
 
-== I. Basic 
+== I. Basics
 
-=== I.I History of intel processors and architectures
+=== i. Assembly Basics: Registers, operands, move
+
+==== *What is Assembly*
+- 一种编程语言，具备数据类型，控制流结构等。同时，它是“中间态”，指令有限且需要明确指明（数据来源（具体寄存器），跳转位置，等等）
+- 汇编语言的具体内容依赖于ISA（Instruction Set Architecture，指令集架构）
+  \ eg: x86, ARM, RISC-V,等 
+
+==== (指令格式):  
+  #table(
+    columns: 3,
+    [operation], [Register name], [Register name],
+    [add], [ %rbx ], [ %rax ]
+  )
+==== Registers
+- CPU内部存储数据的单元（共16个通用寄存器，每个寄存器64位）
+  - %r?x(a,b,c,d)：返回值，被调用保存，参4，参3
+  - %r?i(s,d)：参2，参1
+  - %r?p(b,s)：被调用保存，栈指针
+  - %r?(8-15) (x86-64新增)：参5，参6，调保，调保，被调保存\*4
+==== Memory
+除寄存器外的任何存储单元
+
+
+
+=== i. History of intel processors and architectures
 
 - Complex instruction set Computer(CISC) \ 指令具有多种复杂格式（x86）
 - Reduced instruction Set Computer(RISC) \ 指令格式简单，指令长度固定（ARM）
 
 
-=== I.II C, assembly and machine code
+=== ii. C, assembly and machine code
 
 ==== Definitions
 
