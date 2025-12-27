@@ -18,3 +18,40 @@ a = 0 2 4 6
 5 : 206
 6 : 682 
 7 : 327
+
+# phase_4
+读入a b->0
+
+int func4(int x1, int x2, int x3){
+    int rax = x3 - x2;
+    int tmp = rax;
+    tmp >>= 31; // 符号位
+    rax += tmp;
+    if(x3 > x2){
+        rax ++;
+    }else{
+        rax --; 
+    }
+    rax *= 2;
+
+    return rax;
+}
+
+a <= 8
+edx = 0xe
+esi = 0
+edi = a
+x1 x2 x3
+di:a  si:0  dx:14
+i = x3
+i -= 0
+t = i
+t >>= 31
+i += t
+i <<= 1
+t = i + x2
+t <= x1? -> i=0 ->  t >= x1 ? ->return
+                        not -> x2 = t+1 -> ^ -> i = 2*i+1 -> return 
+    not -> x3 = t-1 -> ^ -> x1*=2 -> return
+
+
