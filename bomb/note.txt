@@ -1,0 +1,20 @@
+# phase_3
+rsp 留24
+b:rcx = rsp + 12
+a:rdx = rsp + 8
+esi -> %d %d 
+读取a b
+/ a > 7 -> boom
+a <= 7
+eax = a
+case a:
+case a : 操作 ->t t = b;
+a = 0 2 4 6
+0 : 207
+1 : 311
+2 : 707
+3 : 256
+4 : 389
+5 : 206
+6 : 682 
+7 : 327
