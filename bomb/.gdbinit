@@ -11,6 +11,11 @@ set args ans.txt
 # b *0x4010bd
 # b *(phase_5+100)
 b phase_6
+# b *(phase_6+95)
+# b *(phase_6+245)
+b *0x401123
+b *0x401140
+b *0x4011e9
 
 # b phase_defused
 # command
