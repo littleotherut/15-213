@@ -937,11 +937,11 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   40199f:	c3                   	ret    
 
 00000000004019a0 <addval_273>:
-  4019a0:	8d 87 48 89 c7 c3    	lea    -0x3c3876b8(%rdi),%eax
+  4019a0:	8d 87 48 89 c7 c3    	lea    -0x3c3876b8(%rdi),%eax # mov %rax,%rdx ; ret
   4019a6:	c3                   	ret    
 
 00000000004019a7 <addval_219>:
-  4019a7:	8d 87 51 73 58 90    	lea    -0x6fa78caf(%rdi),%eax
+  4019a7:	8d 87 51 73 58 90    	lea    -0x6fa78caf(%rdi),%eax # pop rax
   4019ad:	c3                   	ret    
 
 00000000004019ae <setval_237>:
@@ -957,11 +957,11 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   4019c2:	c3                   	ret    
 
 00000000004019c3 <setval_426>:
-  4019c3:	c7 07 48 89 c7 90    	movl   $0x90c78948,(%rdi)
+  4019c3:	c7 07 48 89 c7 90    	movl   $0x90c78948,(%rdi) # mov rax rdi
   4019c9:	c3                   	ret    
 
 00000000004019ca <getval_280>:
-  4019ca:	b8 29 58 90 c3       	mov    $0xc3905829,%eax
+  4019ca:	b8 29 58 90 c3       	mov    $0xc3905829,%eax # pop rax
   4019cf:	c3                   	ret    
 
 00000000004019d0 <mid_farm>:
@@ -973,7 +973,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   4019da:	c3                   	ret    
 
 00000000004019db <getval_481>:
-  4019db:	b8 5c 89 c2 90       	mov    $0x90c2895c,%eax
+  4019db:	b8 5c 89 c2 90       	mov    $0x90c2895c,%eax # pop rsp; mov eax, edx
   4019e0:	c3                   	ret    
 
 00000000004019e1 <setval_296>:
@@ -997,7 +997,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401a02:	c3                   	ret    
 
 0000000000401a03 <addval_190>:
-  401a03:	8d 87 41 48 89 e0    	lea    -0x1f76b7bf(%rdi),%eax
+  401a03:	8d 87 41 48 89 e0    	lea    -0x1f76b7bf(%rdi),%eax # mov %rsp,%rax
   401a09:	c3                   	ret    
 
 0000000000401a0a <setval_276>:
@@ -1005,7 +1005,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401a10:	c3                   	ret    
 
 0000000000401a11 <addval_436>:
-  401a11:	8d 87 89 ce 90 90    	lea    -0x6f6f3177(%rdi),%eax
+  401a11:	8d 87 89 ce 90 90    	lea    -0x6f6f3177(%rdi),%eax # mov ecx esi
   401a17:	c3                   	ret    
 
 0000000000401a18 <getval_345>:
@@ -1073,7 +1073,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401a82:	c3                   	ret    
 
 0000000000401a83 <addval_358>:
-  401a83:	8d 87 08 89 e0 90    	lea    -0x6f1f76f8(%rdi),%eax
+  401a83:	8d 87 08 89 e0 90    	lea    -0x6f1f76f8(%rdi),%eax # mov esp eax
   401a89:	c3                   	ret    
 
 0000000000401a8a <addval_124>:
@@ -1097,7 +1097,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401aaa:	c3                   	ret    
 
 0000000000401aab <setval_350>:
-  401aab:	c7 07 48 89 e0 90    	movl   $0x90e08948,(%rdi)
+  401aab:	c7 07 48 89 e0 90    	movl   $0x90e08948,(%rdi) # mov rsp rax
   401ab1:	c3                   	ret    
 
 0000000000401ab2 <end_farm>:
