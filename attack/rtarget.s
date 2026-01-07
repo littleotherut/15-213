@@ -937,7 +937,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   40199f:	c3                   	ret    
 
 00000000004019a0 <addval_273>:
-  4019a0:	8d 87 48 89 c7 c3    	lea    -0x3c3876b8(%rdi),%eax # mov %rax,%rdx ; ret
+  4019a0:	8d 87 48 89 c7 c3    	lea    -0x3c3876b8(%rdi),%eax # mov %rax,%rdi ; ret
   4019a6:	c3                   	ret    
 
 00000000004019a7 <addval_219>:
@@ -973,7 +973,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   4019da:	c3                   	ret    
 
 00000000004019db <getval_481>:
-  4019db:	b8 5c 89 c2 90       	mov    $0x90c2895c,%eax # pop rsp; mov eax, edx
+  4019db:	b8 5c 89 c2 90       	mov    $0x90c2895c,%eax # pop rsp; movl eax, edx
   4019e0:	c3                   	ret    
 
 00000000004019e1 <setval_296>:
@@ -1005,7 +1005,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401a10:	c3                   	ret    
 
 0000000000401a11 <addval_436>:
-  401a11:	8d 87 89 ce 90 90    	lea    -0x6f6f3177(%rdi),%eax # mov ecx esi
+  401a11:	8d 87 89 ce 90 90    	lea    -0x6f6f3177(%rdi),%eax # movl ecx esi
   401a17:	c3                   	ret    
 
 0000000000401a18 <getval_345>:
@@ -1057,7 +1057,7 @@ extern long long int strtoll_l (const char *__restrict __nptr,
   401a67:	c3                   	ret    
 
 0000000000401a68 <getval_311>:
-  401a68:	b8 89 d1 08 db       	mov    $0xdb08d189,%eax
+  401a68:	b8 89 d1 08 db       	mov    $0xdb08d189,%eax # movl edx ecx
   401a6d:	c3                   	ret    
 
 0000000000401a6e <setval_167>:
