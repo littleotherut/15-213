@@ -21,10 +21,10 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  */
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
-    int blockSize = 8, tmp;
-    for(int i = 0; i < N; i += blockSize){
-        for(int j = 0 ; j < M ; j += blockSize){
-            if (M ==32){
+    if (M ==32){
+        int blockSize = 8, tmp;
+        for(int i = 0; i < N; i += blockSize){
+            for(int j = 0 ; j < M ; j += blockSize){
                 for (int k = i ; k < i + blockSize && k < N ; ++ k){
                     for(int l = j ; l < j + blockSize && l < M ; ++ l){
                         if (k != l){
@@ -35,11 +35,17 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
                     if(i == j) B[k][k]=tmp;
                 }
             }
-            else if(M==64){
-                int miniBlock = 4;
-                int t1,t2,t3,t4;
-                for(int k = i; k < i + miniBlock ; ++ k){
-                    for(int l = j ; l < j + miniBlock ; ++ l){
+        }
+    }
+    else if(M==64){
+        int blockSize = 8, tmp;
+        int miniBlock = 4;
+        int t1,t2,t3,t4;
+        for(int i = 0; i < N; i += blockSize){
+            for(int j = 0 ; j < M ; j += blockSize){
+                for(int k = i; k < i + miniBlock && k < i + blockSize && k < N; ++ k){
+                    for(int l = j ; l < j + miniBlock && l < j + blockSize && j < M; ++ l){
+                        B[l][k+miniBlock] = A[k][l+miniBlock];
                         if( k != l){
                             B[l][k] = A[k][l];
                         }
@@ -47,28 +53,22 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
                     }
                     if(i==j) B[k][k]=tmp;
                 }
-                for(int k = i; k < i + miniBlock ; ++ k){
-                    t1 = A[k][j+miniBlock];
-                    t2 = A[k][j+miniBlock+1];
-                    t3 = A[k][j+miniBlock+2];
-                    t4 = A[k][j+miniBlock+3];
-                    B[j+miniBlock][k] = t1;
-                    B[j+miniBlock+1][k] = t2;
-                    B[j+miniBlock+2][k] = t3;
-                    B[j+miniBlock+3][k] = t4;
+                for(int l = j + miniBlock; l < j + 2*miniBlock&& l < j + blockSize && j < M; ++ l){
+                    t1 = B[l-miniBlock][i+miniBlock];
+                    t2 = B[l-miniBlock][i+miniBlock+1];
+                    t3 = B[l-miniBlock][i+miniBlock+2];
+                    t4 = B[l-miniBlock][i+miniBlock+3];
+                    B[l-miniBlock][i+miniBlock] = A[i+miniBlock][l-miniBlock];
+                    B[l-miniBlock][i+miniBlock+1] = A[i+miniBlock+1][l-miniBlock];
+                    B[l-miniBlock][i+miniBlock+2] = A[i+miniBlock+2][l-miniBlock];
+                    B[l-miniBlock][i+miniBlock+3] = A[i+miniBlock+3][l-miniBlock];
+                    B[l][i]=t1;
+                    B[l][i+1]=t2;
+                    B[l][i+2]=t3;
+                    B[l][i+3]=t4;
                 }
-                for(int k = i + miniBlock; k < i + 2*miniBlock ; ++ k){
-                    t1 = A[k][j];
-                    t2 = A[k][j+1];
-                    t3 = A[k][j+2];
-                    t4 = A[k][j+3];
-                    B[j][k] = t1;
-                    B[j+1][k] = t2;
-                    B[j+2][k] = t3;
-                    B[j+3][k] = t4;
-                }
-                for(int k = i + miniBlock; k < i + 2*miniBlock ; ++ k){
-                    for(int l = j + miniBlock; l < j + 2*miniBlock ; ++ l){
+                for(int k = i + miniBlock; k < i + 2*miniBlock&& k < i + blockSize && k < N ; ++ k){
+                    for(int l = j + miniBlock; l < j + 2*miniBlock && l < j + blockSize && j < M; ++ l){
                         if( k != l){
                             B[l][k] = A[k][l];
                         }
@@ -78,6 +78,23 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
                 }
             }
         }
+    }
+    else{
+        int blockSize = 16,tmp;
+        for(int i = 0; i < N; i += blockSize){
+            for(int j = 0 ; j < M ; j += blockSize){
+                for (int k = i ; k < i + blockSize && k < N ; ++ k){
+                    for(int l = j ; l < j + blockSize && l < M ; ++ l){
+                        if (k != l){
+                            B[l][k] = A[k][l]; 
+                        }                   
+                        else tmp = A[k][l];
+                    }
+                    if(i == j) B[k][k]=tmp;
+                }
+            }
+        }
+
     }
 }
 /*
