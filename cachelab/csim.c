@@ -5,6 +5,53 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+int hits_count = 0, misses_count = 0, evicts_count = 0;
+
+typedef struct cacheLine_ {
+    bool valid;
+    unsigned long tag;
+    int lruCount;
+} cacheLine;
+
+void cacheAccess(cacheLine **cache, int s, int E, int b, char *cmd){
+    unsigned long addr;
+    sscanf(cmd+3,"%lx",&addr);
+    int set_index = (addr >> b) & ((1 << s) - 1);
+    int tag = addr >> (s+b);
+    bool hit = false;
+    for(int i = 0 ; i < E ; ++ i){
+        if (cache[set_index][i].valid && cache[set_index][i].tag == tag){
+            cache[set_index][i].lruCount = 0; // Update LRU
+            hits_count ++;
+            hit = true;
+            break;
+        }
+    }
+    if(!hit){
+        misses_count ++;
+        bool evicted = true;
+        for(int i = 0 ; i < E ; ++ i){
+            if(!cache[set_index][i].valid){
+                cache[set_index][i].tag = tag;
+                cache[set_index][i].valid = true;
+                cache[set_index][i].lruCount = 0; // Update LRU
+                evicted = false;
+                break;
+            }
+        }
+        if(evicted){
+            evicts_count ++;
+            int lruIndex = 0;
+            for(int i = 1 ; i < E ; ++ i){
+                if(cache[set_index][i].lruCount > cache[set_index][lruIndex].lruCount){
+                    lruIndex = i;
+                }
+            }
+            cache[set_index][lruIndex].tag = tag;
+            cache[set_index][lruIndex].lruCount = 0; // Update LRU
+        }
+    }
+}
 
 int main(int argc, char* argv[]) {
     int opt;
@@ -21,85 +68,34 @@ int main(int argc, char* argv[]) {
     }
     int S = (int)pow(2,s);
     
-    int **cache = (int **)malloc(S*sizeof(int *));
-    for(int i = 0; i < S; i++){
-        cache[i] = (int *)malloc(E*sizeof(int));
-        memset(cache[i],0,E*sizeof(int));
+    cacheLine **cache = (cacheLine **)malloc(S*sizeof(cacheLine *));
+    for(int i = 0 ; i < S ; ++ i){
+        cache[i] = (cacheLine *)malloc(E*sizeof(cacheLine));
+        for(int j = 0 ; j < E ; ++ j){
+            cache[i][j].valid = false;
+            cache[i][j].tag = 0;
+            cache[i][j].lruCount = 0;
+        }
     }
-    bool *valid = (bool *)malloc(S*E*sizeof(bool));
-    memset(valid,false,S*E*sizeof(bool));
-    
-    int hits_count = 0, misses_count = 0, evicts_count = 0;
 
     char *cmd = (char *)malloc(16*sizeof(char));
     while(fgets(cmd,16,file) != NULL){
         char opt = cmd[1];
-        switch (opt)
-        {
-        case 'L':
-        case 'S': {
-            unsigned long addr;
-            sscanf(cmd+3,"%lx",&addr);
-            int set_index = (addr >> b) & ((1 << s) - 1);
-            int tag = addr >> (s+b);
-            bool hit = false;
-            for(int i = 0 ; i < E ; ++ i){
-                if (valid[set_index * E + i] && cache[set_index][i] == tag){
-                    hits_count++;
-                    hit = true;
-                    break;
+        for(int i = 0 ; i < S ; ++ i){
+            for(int j = 0 ; j < E ; ++ j){
+                if(cache[i][j].valid){
+                    cache[i][j].lruCount ++;
                 }
             }
-            if(!hit){
-                misses_count ++;
-                bool evicted = true;
-                for(int i = 0 ; i < E ; ++ i){
-                    if(!valid[set_index * E + i]){
-                        cache[set_index][i] = tag;
-                        valid[set_index * E + i] = true;
-                        evicted = false;
-                        break;
-                    }
-                }
-                if(evicted){
-                    evicts_count ++;
-                    cache[set_index][0] = tag; // TODO : LRU policy
-                }
-            }
-            break;
         }
+        switch (opt) {
+        case 'L':
+        case 'S': 
+            cacheAccess(cache, s, E, b, cmd);
+            break;
         case 'M': {
-            unsigned long addr;
-            sscanf(cmd+3,"%lx",&addr);
-            int set_index = (addr >> b) & ((1 << s) - 1);
-            int tag = addr >> (s+b);
-            // First access
-            bool hit = false;
-            for(int i = 0 ; i < E ; ++ i){
-                if (valid[set_index * E + i] && cache[set_index][i] == tag){
-                    hits_count++;
-                    hit = true;
-                    break;
-                }
-            }
-            if(!hit){
-                misses_count ++;
-                bool evicted = true;
-                for(int i = 0 ; i < E ; ++ i){
-                    if(!valid[set_index * E + i]){
-                        cache[set_index][i] = tag;
-                        valid[set_index * E + i] = true;
-                        evicted = false;
-                        break;
-                    }
-                }
-                if(evicted){
-                    evicts_count ++;
-                    cache[set_index][0] = tag; // TODO : LRU policy
-                }
-            }
-            // Second access (always hit)
-            hits_count++;
+            cacheAccess(cache, s, E, b, cmd);
+            cacheAccess(cache, s, E, b, cmd);
             break;
         }
         default:
